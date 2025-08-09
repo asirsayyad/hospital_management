@@ -1,8 +1,10 @@
+// import 'package:carousel_slider/carousel_slider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hospital_management/staff_screen/staff_first_screen.dart';
 
-import 'doctors_login_screen.dart';
+import 'doctor_screens/doctors_login_screen.dart';
 
 class ControllerLogin extends GetxController {
   final textEditingControllerPhoneNumber = TextEditingController();
@@ -24,9 +26,13 @@ class LoginScreen extends StatelessWidget {
         "Login Successful",
         "Welcome back!",
         snackPosition: SnackPosition.BOTTOM,
+
         backgroundColor: Colors.green,
         colorText: Colors.white,
+
+
       );
+      Get.to(StaffFirstScreen());
     } else {
       Get.snackbar(
         "Login Failed",
@@ -293,6 +299,7 @@ class LoginScreen extends StatelessWidget {
                                     padding: EdgeInsets.symmetric(vertical: 14),
                                   ),
                                   child: Text(
+
                                     'Sign In',
                                     style: TextStyle(
                                       fontSize: 16,
