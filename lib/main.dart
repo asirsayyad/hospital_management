@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hospital_management/doctor_screens/doctor_first_screen.dart';
 import 'package:hospital_management/doctor_screens/doctors_login_screen.dart';
 // import 'package:hospital_management/first_screen.dart';
 import 'package:hospital_management/loading_screen.dart';
@@ -34,8 +35,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
+      debugShowCheckedModeBanner: false,
       title: 'Flutter Demo',
       theme: ThemeData(
+
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
       home: StaffFirstScreen(),

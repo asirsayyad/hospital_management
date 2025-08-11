@@ -1,15 +1,8 @@
-// import 'package:carousel_slider/carousel_slider.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:hospital_management/staff_screen/staff_first_screen.dart';
-
+import 'controller_login.dart'; // Import your controller
 import 'doctor_screens/doctors_login_screen.dart';
-
-class ControllerLogin extends GetxController {
-  final textEditingControllerPhoneNumber = TextEditingController();
-  final textEditingControllerPassword = TextEditingController();
-}
 
 class LoginScreen extends StatelessWidget {
   LoginScreen({super.key});
@@ -18,30 +11,8 @@ class LoginScreen extends StatelessWidget {
   final controller = Get.put(ControllerLogin());
 
   void controllerLogin() {
-    final phone = controller.textEditingControllerPhoneNumber.text.trim();
-    final password = controller.textEditingControllerPassword.text;
-
-    if (phone == "+918625012750" && password == "Admin@123") {
-      Get.snackbar(
-        "Login Successful",
-        "Welcome back!",
-        snackPosition: SnackPosition.BOTTOM,
-
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-
-
-      );
-      Get.to(StaffFirstScreen());
-    } else {
-      Get.snackbar(
-        "Login Failed",
-        "Invalid phone or password",
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
-    }
+    // Just call the controller method
+    controller.performLogin();
   }
 
   @override
@@ -163,20 +134,19 @@ class LoginScreen extends StatelessWidget {
                         height: double.infinity,
                         viewportFraction: 1.0,
                       ),
-                      items:
-                          [
-                            'assets/images/hospitalre.png',
-                            'assets/images/doctors.png',
-                          ].map((imgPath) {
-                            return Container(
-                              decoration: BoxDecoration(
-                                image: DecorationImage(
-                                  image: AssetImage(imgPath),
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                            );
-                          }).toList(),
+                      items: [
+                        'assets/images/hospitalre.png',
+                        'assets/images/doctors.png',
+                      ].map((imgPath) {
+                        return Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                              image: AssetImage(imgPath),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        );
+                      }).toList(),
                     ),
                     Container(color: Colors.white.withOpacity(0.1)),
                     Center(
@@ -217,13 +187,12 @@ class LoginScreen extends StatelessWidget {
                                 height: 45,
                                 width: 250,
                                 child: TextFormField(
-                                  controller: controller
-                                      .textEditingControllerPhoneNumber,
+                                  controller: controller.textEditingControllerPhoneNumber,
                                   keyboardType: TextInputType.phone,
                                   style: TextStyle(fontSize: 14),
                                   decoration: InputDecoration(
                                     labelText: 'Phone Number',
-                                    hintText: '+91XXXXXXXXXX',
+                                    hintText: 'Enter Phone number',
                                     border: OutlineInputBorder(),
                                     contentPadding: EdgeInsets.symmetric(
                                       horizontal: 12,
@@ -233,11 +202,6 @@ class LoginScreen extends StatelessWidget {
                                   validator: (value) {
                                     if (value == null || value.trim().isEmpty) {
                                       return 'Phone number is required';
-                                    }
-                                    if (!RegExp(
-                                      r'^\+91\d{10}$',
-                                    ).hasMatch(value.trim())) {
-                                      return 'Enter valid phone number';
                                     }
                                     return null;
                                   },
@@ -250,13 +214,12 @@ class LoginScreen extends StatelessWidget {
                                 height: 45,
                                 width: 250,
                                 child: TextFormField(
-                                  controller:
-                                      controller.textEditingControllerPassword,
+                                  controller: controller.textEditingControllerPassword,
                                   obscureText: true,
                                   style: TextStyle(fontSize: 14),
                                   decoration: InputDecoration(
                                     labelText: 'Password',
-                                    hintText: '*********',
+                                    hintText: 'Enter Password',
                                     border: OutlineInputBorder(),
                                     contentPadding: EdgeInsets.symmetric(
                                       horizontal: 12,
@@ -267,9 +230,6 @@ class LoginScreen extends StatelessWidget {
                                   validator: (value) {
                                     if (value == null || value.trim().isEmpty) {
                                       return 'Password is required';
-                                    }
-                                    if (value.length < 6) {
-                                      return 'Password must be at least 6 characters';
                                     }
                                     return null;
                                   },
@@ -299,7 +259,6 @@ class LoginScreen extends StatelessWidget {
                                     padding: EdgeInsets.symmetric(vertical: 14),
                                   ),
                                   child: Text(
-
                                     'Sign In',
                                     style: TextStyle(
                                       fontSize: 16,

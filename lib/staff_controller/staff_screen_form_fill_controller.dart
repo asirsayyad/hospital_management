@@ -7,11 +7,8 @@ class StaffPatientFormController extends GetxController {
   late TextEditingController firstNameController;
   late TextEditingController lastNameController;
   late TextEditingController mobilenumberController;
-
-
   late TextEditingController dobController;
   late TextEditingController bloodGroupController;
-  late TextEditingController mobileNumberController;
   late TextEditingController statecontroller;
   late TextEditingController cityController;
   late TextEditingController principlesController;
@@ -24,10 +21,8 @@ class StaffPatientFormController extends GetxController {
     firstNameController = TextEditingController();
     lastNameController = TextEditingController();
     mobilenumberController =TextEditingController();
-
     dobController = TextEditingController();
     bloodGroupController = TextEditingController();
-    mobileNumberController = TextEditingController();
     statecontroller = TextEditingController();
     cityController = TextEditingController();
     principlesController = TextEditingController();
@@ -70,7 +65,7 @@ class StaffPatientFormController extends GetxController {
       ) VALUES (
         '${firstNameController.text.trim()}',
         '${lastNameController.text.trim()}',
-         '${mobileNumberController.text.trim()}',
+         '${mobilenumberController.text.trim()}',
         '${dobController.text.trim()}',
         '${bloodGroupController.text.trim()}',
         '${statecontroller.text.trim()}',
@@ -126,7 +121,7 @@ class StaffPatientFormController extends GetxController {
         ),
       );
       return; // Add return to stop execution
-    } else if (mobileNumberController.text.trim().isEmpty) {
+    } else if (mobilenumberController.text.trim().isEmpty) {
       ScaffoldMessenger.of(Get.context!).showSnackBar(
         SnackBar(
           content: Text('Please enter mobile number'),

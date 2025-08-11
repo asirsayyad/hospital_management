@@ -31,7 +31,19 @@ class ServiceDb {
   registration_date TEXT
 );
           ''');
-
+          await db.execute('''
+           CREATE TABLE appointments (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  patient_id INTEGER,
+  doctor_name TEXT NOT NULL,
+  visit_type TEXT NOT NULL,
+  appointment_date TEXT NOT NULL,
+  appointment_time TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'Scheduled',
+  created_date TEXT,
+  FOREIGN KEY (patient_id) REFERENCES patient (id)
+);
+          ''');
         },
       ),
     );

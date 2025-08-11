@@ -37,7 +37,7 @@ class StaffPatientFormFill extends StatelessWidget {
             ),
             SizedBox(height: 16),
             TextField(
-              controller: controller.mobileNumberController,
+              controller: controller.mobilenumberController,
               decoration: InputDecoration(
                 labelText: 'Mobile Number',
                 hintText: 'Please Enter Mobile number',

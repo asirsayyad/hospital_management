@@ -1,105 +1,98 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hospital_management/staff_fragments/appointment.dart';
 import 'package:hospital_management/staff_screen/staff_patient_form_fill.dart';
-
-import '../staff_controller/Staff_first_screen_controller.dart';
+import '../staff_controller/staff_first_screen_controller.dart';
+import '../staff_fragments/patients_showlist.dart';
 
 class StaffFirstScreen extends StatelessWidget {
   const StaffFirstScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final StaffFirstScreenController controller = Get.put(StaffFirstScreenController());
+     StaffFirstScreenController controller = Get.put(StaffFirstScreenController());
 
     return Scaffold(
       body: Row(
         children: [
-          // Left side menu - 20% of screen width
+          // Left menu
           Container(
             width: MediaQuery.of(context).size.width * 0.2,
-            color: Colors.blue[50],
+            color: Colors.green[50],
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 InkWell(
                   onTap: () {
-                    controller.fetchPatientNames(); // fetch patient list from DB
+                    controller.fetchPatientNames();
+                    controller.selectMenuItem(0); // Show Patient screen
                   },
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
-                    // color: Colors.blue[100],
-                    child: const Text(
-                      'Patient',
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    child: const Text('Patient', style: TextStyle(fontSize: 16)),
                   ),
                 ),
                 InkWell(
-                  onTap: () => controller.selectMenuItem(1),
+                  onTap: () => controller.selectMenuItem(1), // Show Appointment screen
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
-                    child: const Text(
-                      'Appointment',
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    child: const Text('Appointment', style: TextStyle(fontSize: 16)),
                   ),
                 ),
                 InkWell(
-                  onTap: () => controller.selectMenuItem(2),
+                  onTap: () => controller.selectMenuItem(2), // Show Dashboard screen
                   child: Container(
                     width: double.infinity,
                     padding: const EdgeInsets.all(16),
-                    child: const Text(
-                      'Dashboard',
-                      style: TextStyle(fontSize: 16),
-                    ),
+                    child: const Text('Dashboard', style: TextStyle(fontSize: 16)),
                   ),
                 ),
               ],
             ),
           ),
 
-          // Right side content - 80% of screen width
+          // Right side content
           Expanded(
             child: Column(
               children: [
-                // Search bar at top
-                Padding(
-                  padding: const EdgeInsets.all(16),
-                  child: TextField(
-                    onChanged: controller.updateSearch,
-                    decoration: const InputDecoration(
-                      hintText: 'Search...',
-                      border: OutlineInputBorder(),
-                      prefixIcon: Icon(Icons.search),
-                    ),
-                  ),
-                ),
+                // Search bar (only show for patient and appointment lists)
+                Obx(() {
+                  if (controller.selectedIndex.value == 0 || controller.selectedIndex.value == 1) {
+                    return Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        onChanged: controller.updateSearch,
+                        decoration: const InputDecoration(
+                          hintText: 'Search...',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox();
+                }),
 
-                // ListView showing real patient data
+                // Screen content
                 Expanded(
                   child: Obx(() {
-                    final filteredList = controller.filteredPatientList;
-
-                    if (filteredList.isEmpty) {
-                      return const Center(child: Text('No patients found.'));
-                    }
-
-                    return ListView.builder(
-                      itemCount: filteredList.length,
-                      itemBuilder: (context, index) {
-                        final patient = filteredList[index];
-                        return ListTile(
-                          title: Text(
-                              '${patient['name'] ?? ''} ${patient['last_name'] ?? ''}'),
-                          subtitle: Text("${patient["mobile_number"]}"),
-                          leading: const Icon(Icons.person),
-                          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+                    switch (controller.selectedIndex.value) {
+                      case 0:
+                        return PatientsShowlist();
+                      case 1:
+                        return Appointment();
+                      case 2:
+                        return const Center(
+                          child: Text(
+                            "Dashboard Screen",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
                         );
-                      },
-                    );
+                      default:
+                        return const SizedBox();
+                    }
                   }),
                 ),
               ],
@@ -107,12 +100,19 @@ class StaffFirstScreen extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Get.to(() => StaffPatientFormFill());
-        },
-        child: const Icon(Icons.add),
-      ),
+
+      floatingActionButton: Obx(() {
+        // Show FAB only on Patient screen
+        if (controller.selectedIndex.value == 0) {
+          return FloatingActionButton(
+            onPressed: () {
+              Get.to(() => StaffPatientFormFill());
+            },
+            child: const Icon(Icons.add),
+          );
+        }
+        return const SizedBox();
+      }),
     );
   }
 }

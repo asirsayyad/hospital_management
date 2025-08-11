@@ -1,55 +1,107 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hospital_management/doctor_fragments/medicines.dart';
+import 'package:hospital_management/staff_fragments/appointment.dart';
+import 'package:hospital_management/staff_screen/staff_patient_form_fill.dart';
+import '../doctor_fragments/patient_list_controller.dart';
+import '../doctor_fragments/patients_showlist.dart';
+import '../staff_controller/staff_first_screen_controller.dart';
+import '../staff_fragments/patients_showlist.dart';
 
-import '../doctor_screens_controller/doctor_first_screen_controller.dart';
-
-class doctor_first_screen extends StatelessWidget {
-  const doctor_first_screen({super.key});
+class DoctorFirstScreen extends StatelessWidget {
+  const DoctorFirstScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(doctor_first_screen_controller());
+  patient_list_controller controller = Get.put(patient_list_controller());
 
     return Scaffold(
       body: Row(
         children: [
-          // Left Panel - 20%
-        Expanded(
-        flex: 2,
-        child: Container(
-          color: Colors.blue, // Background color for entire 20% panel
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              InkWell(
-                onTap: () {},
-                child:  Center(
-                  child: ListTile( onTap: (){},
-                    title: Text(
-                      'Patients',
-                      style: TextStyle(color: Colors.white),
-                    ),
+          // Left menu
+          Container(
+            width: MediaQuery.of(context).size.width * 0.2,
+            color: Colors.blue[50],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                InkWell(
+                  onTap: () {
+                    controller.fetchPatientNames();
+                    controller.selectMenuItem(0); // Show Patient screen
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    child: const Text('Patient', style: TextStyle(fontSize: 16)),
                   ),
                 ),
-              ),
-            ],
+                InkWell(
+                  onTap: () => controller.selectMenuItem(1), // Show Appointment screen
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    child: const Text('medicine', style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+                InkWell(
+
+                  onTap: () { controller.selectMenuItem(2);}, // Show Dashboard screen
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    child: const Text('Dashboard', style: TextStyle(fontSize: 16)),
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-      ),
 
-
-          // Right Panel - 80%
+          // Right side content
           Expanded(
-            flex: 8,
             child: Column(
-              children: const [
-                TextField(), // Search bar at top
+              children: [
+                // Search bar (only show for patient and appointment lists)
+                Obx(() {
+                  if (controller.selectedIndex.value == 0 || controller.selectedIndex.value == 1) {
+                    return Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: TextField(
+                        onChanged: controller.updateSearch,
+                        decoration: const InputDecoration(
+                          hintText: 'Search...',
+                          border: OutlineInputBorder(),
+                          prefixIcon: Icon(Icons.search),
+                        ),
+                      ),
+                    );
+                  }
+                  return const SizedBox();
+                }),
+
+                // Screen content
+                Expanded(
+                  child: Obx(() {
+                    switch (controller.selectedIndex.value) {
+                      case 0:
+                        return Patients();
+                      case 1:
+                        return Medicines();
+                      case 2:
+                        return const Center(
+                          child: Text(
+                            "Dashboard Screen",
+                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
+                        );
+                      default:
+                        return const SizedBox();
+                    }
+                  }),
+                ),
               ],
             ),
           ),
         ],
-      ),
-    );
-  }
+      ));}
 }

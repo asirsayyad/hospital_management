@@ -10,47 +10,49 @@ class StaffFirstScreenController extends GetxController {
   var patientList = <Map<String, dynamic>>[].obs;
   Database db = Get.find();
 
-  // Dummy JSON data
-  var dummyData = [
-    {"id": 1, "name": "John Doe", "type": "Patient", "date": "2025-08-08"},
-    {"id": 2, "name": "Jane Smith", "type": "Appointment", "date": "2025-08-09"},
-    {"id": 3, "name": "Bob Johnson", "type": "Patient", "date": "2025-08-10"},
-    {"id": 4, "name": "Alice Brown", "type": "Appointment", "date": "2025-08-11"},
-    {"id": 5, "name": "Charlie Wilson", "type": "Patient", "date": "2025-08-12"},
-  ].obs;
 
-  // void updateSearch(String value) {
-  //   searchText.value = value;
-  // }
-
-  // void selectMenuItem(int index) {
-  //   selectedIndex.value = index;
-  // }
 
   Future<void> fetchPatientNames() async {
     try {
+      // Fetch id too so we can delete rows
       List<Map<String, dynamic>> list = await db.rawQuery(
-          "SELECT name, last_name FROM patient"
+          "SELECT id, name, last_name, mobile_number FROM patient LIMIT 50"
       );
       patientList.value = list;
-      filteredPatientList.value = list; // initial copy for search
+      filteredPatientList.value = List.from(list);
     } catch (e) {
       debugPrint("DB Error: $e");
     }
   }
 
+
+
+
+  // todo: pagination
   Future<void> updateSearch(String query) async {
-    final results = patientList.where((item) {
-      final fullName = '${item['name']} ${item['last_name']}'.toLowerCase();
-      return fullName.contains(query.toLowerCase());
-    }).toList();
-    filteredPatientList.value = results;
+    if(query.length > 2) {
+      final lowerCaseQuery = query.toLowerCase().trim();
+      var listPatient = await db.rawQuery("SELECT * FROM patient WHERE name LIKE '%$lowerCaseQuery%' OR last_name LIKE '%$lowerCaseQuery%' OR mobile_number LIKE '%$lowerCaseQuery%'");
+
+      // final results = patientList.where((item) {
+      //   final fullName =
+      //   '${item['name']} ${item['last_name']}'.toLowerCase();
+      //   final mobileNumber = item['mobile_number']?.toString().toLowerCase() ??
+      //       '';
+      //   return fullName.contains(lowerCaseQuery) ||
+      //       mobileNumber.contains(lowerCaseQuery);
+      // }).toList();
+
+      filteredPatientList.value = listPatient;
+    } else {
+      fetchPatientNames();
+    }
+
   }
 
   Future<void> selectMenuItem(int index) async {
-    // You can add logic to switch screen/tab if needed
-    debugPrint("Selected menu item: $index");
+    selectedIndex.value = index;
   }
+
+/// Deletes a patient from DB and updates lists/
 }
-
-
