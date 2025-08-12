@@ -44,6 +44,19 @@ class ServiceDb {
   FOREIGN KEY (patient_id) REFERENCES patient (id)
 );
           ''');
+          await db.execute('''
+           CREATE TABLE doctor (
+  id INTEGER PRIMARY KEY AUTOINCREMENT,
+  first_name TEXT NOT NULL,
+  last_name TEXT NOT NULL,
+  degree TEXT NOT NULL,
+  start_time TEXT NOT NULL,
+  end_time TEXT NOT NULL,
+  gender TEXT NOT NULL,
+  is_active INTEGER DEFAULT 1,
+  created_date TEXT
+);
+          ''');
         },
       ),
     );

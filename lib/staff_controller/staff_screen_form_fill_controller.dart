@@ -48,8 +48,7 @@ class StaffPatientFormController extends GetxController {
 
     Future<void> insertPatient({required Database db}) async {
       try {
-        String currentDate = DateFormat('dd MMMM yyyy HH:mm').format(DateTime.now());
-        // Full date-time format
+        String currentDate = DateFormat('yyyy-MM-dd HH:mm').format(DateTime.now());        // Full date-time format
 
         String query = '''
       INSERT INTO patient (

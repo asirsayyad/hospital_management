@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:hospital_management/doctor_fragments/new_doctor_fragments.dart';
 import 'package:hospital_management/staff_fragments/appointment.dart';
 import 'package:hospital_management/staff_screen/staff_patient_form_fill.dart';
 import '../staff_controller/staff_first_screen_controller.dart';
@@ -49,6 +50,14 @@ class StaffFirstScreen extends StatelessWidget {
                     child: const Text('Dashboard', style: TextStyle(fontSize: 16)),
                   ),
                 ),
+                InkWell(
+                  onTap: () => controller.selectMenuItem(3), // Show Dashboard screen
+                  child: Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(16),
+                    child: const Text('Doctors', style: TextStyle(fontSize: 16)),
+                  ),
+                )
               ],
             ),
           ),
@@ -90,6 +99,8 @@ class StaffFirstScreen extends StatelessWidget {
                             style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         );
+                      case 3:
+                        return NewDoctorFragments();
                       default:
                         return const SizedBox();
                     }
