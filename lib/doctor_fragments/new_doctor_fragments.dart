@@ -31,7 +31,7 @@ class NewDoctorFragments extends StatelessWidget {
                   final doctor = doctorList[index];
                   final isActive = doctor['is_active'] == 1;
 
-                  return ListTile(
+                  return ListTile(onTap: (){},
                     title: Text(
                       '${doctor['first_name'] ?? ''} ${doctor['last_name'] ?? ''}',
                       style: TextStyle(fontWeight: FontWeight.bold),

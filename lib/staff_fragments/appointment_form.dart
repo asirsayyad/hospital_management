@@ -1,59 +1,67 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'appointment_controller.dart';
+import 'package:hospital_management/staff_fragments/patients_showlist.dart';
+import '../doctor_fragments/patients_showlist.dart';
+import 'appointment_form_controller.dart';
 
 class AppointmentForm extends StatelessWidget {
   const AppointmentForm({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(AppointmentController());
+    final controller = Get.put(AppointmentFormController());
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Appointment Schedule"),
-      ),
+      appBar: AppBar(title: Text("Appointment Schedule")),
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Select Doctor:'),
+          children: [// Patient Name:
+            Text('Patient Name:'),
             SizedBox(height: 8),
-            Obx(() => DropdownButtonFormField<String>(
-              value: controller.selectedDoctor.value.isEmpty
-                  ? null
-                  : controller.selectedDoctor.value,
-              hint: Text('Choose a doctor'),
-              items: controller.doctors.map((doctor) {
-                return DropdownMenuItem(
-                  value: doctor,
-                  child: Text(doctor),
-                );
-              }).toList(),
-              onChanged: (value) {
-                if (value != null) controller.selectDoctor(value);
+            InkWell(
+              onTap: () async {
+                // Navigate to your patient list screen
+               Get.to(() => PatientsShowlist()); // replace with your actual widget
               },
-            )),
+              child: IgnorePointer(
+                child: TextFormField(
+                  // controller: controller.patientNameController,
+                  decoration: InputDecoration(
+                    hintText: 'Select patient',
+                    border: OutlineInputBorder(),
+                    suffixIcon: Icon(Icons.arrow_drop_down),
+                  ),
+                ),
+              ),
+            ),
+
+
+            Text('Doctor Name:'),
+            SizedBox(height: 8),
+            TextFormField(
+              controller: controller.doctorNameController,
+              decoration: InputDecoration(
+                hintText: 'Enter doctor name',
+                border: OutlineInputBorder(),
+              ),
+            ),
 
             SizedBox(height: 20),
 
             Text('Visit Type:'),
             SizedBox(height: 8),
             Obx(() => DropdownButtonFormField<String>(
-              value: controller.selectedVisitType.value.isEmpty
-                  ? null
-                  : controller.selectedVisitType.value,
+              value: controller.selectedVisitType.value.isEmpty ? null : controller.selectedVisitType.value,
               hint: Text('Select visit type'),
               items: controller.visitTypes.map((type) {
-                return DropdownMenuItem(
-                  value: type,
-                  child: Text(type),
-                );
+                return DropdownMenuItem(value: type, child: Text(type));
               }).toList(),
               onChanged: (value) {
                 if (value != null) controller.selectVisitType(value);
               },
+              decoration: InputDecoration(border: OutlineInputBorder()),
             )),
 
             SizedBox(height: 20),
@@ -61,9 +69,7 @@ class AppointmentForm extends StatelessWidget {
             Text('Select Date:'),
             SizedBox(height: 8),
             Obx(() => ListTile(
-              title: Text(
-                  "${controller.selectedDate.value.day}/${controller.selectedDate.value.month}/${controller.selectedDate.value.year}"
-              ),
+              title: Text("${controller.selectedDate.value.day}/${controller.selectedDate.value.month}/${controller.selectedDate.value.year}"),
               trailing: Icon(Icons.calendar_today),
               onTap: () async {
                 DateTime? pickedDate = await showDatePicker(
@@ -72,9 +78,7 @@ class AppointmentForm extends StatelessWidget {
                   firstDate: DateTime.now(),
                   lastDate: DateTime.now().add(Duration(days: 365)),
                 );
-                if (pickedDate != null) {
-                  controller.selectDate(pickedDate);
-                }
+                if (pickedDate != null) controller.selectDate(pickedDate);
               },
             )),
 
@@ -83,19 +87,15 @@ class AppointmentForm extends StatelessWidget {
             Text('Select Time:'),
             SizedBox(height: 8),
             Obx(() => DropdownButtonFormField<String>(
-              value: controller.selectedTimeSlot.value.isEmpty
-                  ? null
-                  : controller.selectedTimeSlot.value,
+              value: controller.selectedTimeSlot.value.isEmpty ? null : controller.selectedTimeSlot.value,
               hint: Text('Choose time slot'),
               items: controller.timeSlots.map((time) {
-                return DropdownMenuItem(
-                  value: time,
-                  child: Text(time),
-                );
+                return DropdownMenuItem(value: time, child: Text(time));
               }).toList(),
               onChanged: (value) {
                 if (value != null) controller.selectTimeSlot(value);
               },
+              decoration: InputDecoration(border: OutlineInputBorder()),
             )),
 
             SizedBox(height: 40),
@@ -103,9 +103,7 @@ class AppointmentForm extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  controller.scheduleAppointment();
-                },
+                onPressed: controller.scheduleAppointment,
                 child: Text('Schedule Appointment'),
               ),
             )
