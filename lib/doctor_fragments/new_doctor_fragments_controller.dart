@@ -27,7 +27,51 @@ class DoctorListController extends GetxController {
   }
 
   /// Deletes a doctor from DB and updates lists
+  Future<void> deleteDoctor(dynamic doctorId) async {
+    try {
+      // Convert to int if needed
+      int id = doctorId is int ? doctorId : int.tryParse('$doctorId') ?? 0;
 
+      if (id <= 0) {
+        debugPrint("Invalid doctor ID: $doctorId");
+        return;
+      }
+
+      // Delete from database
+      int deletedRows = await db.delete(
+        'doctor',
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      if (deletedRows > 0) {
+        // Remove from local lists
+        doctorList.removeWhere((doctor) => doctor['id'] == id);
+        filteredDoctorList.removeWhere((doctor) => doctor['id'] == id);
+
+        debugPrint("Doctor deleted successfully");
+
+        Get.snackbar(
+          "Doctor Deleted",
+          "Doctor has been removed successfully",
+          snackPosition: SnackPosition.BOTTOM,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        debugPrint("No doctor found with ID: $id");
+      }
+    } catch (e) {
+      debugPrint("Error deleting doctor: $e");
+      Get.snackbar(
+        "Error",
+        "Failed to delete doctor",
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
 
   // Search function (optional)
   Future<void> updateSearch(String query) async {

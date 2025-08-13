@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:hospital_management/staff_fragments/patients_showlist.dart';
-import '../doctor_fragments/patients_showlist.dart';
+import 'package:hospital_management/doctor_fragments/new_doctor_fragments.dart';
 import 'appointment_form_controller.dart';
 
 class AppointmentForm extends StatelessWidget {
@@ -17,34 +17,54 @@ class AppointmentForm extends StatelessWidget {
         padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: [// Patient Name:
+          children: [
             Text('Patient Name:'),
             SizedBox(height: 8),
             InkWell(
               onTap: () async {
-                // Navigate to your patient list screen
-               Get.to(() => PatientsShowlist()); // replace with your actual widget
+                // Navigate to patient list and wait for result
+                final result = await Get.to(() => PatientsShowlist());
+                if (result != null && result is String) {
+                  controller.selectPatient(result);
+                }
               },
               child: IgnorePointer(
-                child: TextFormField(
-                  // controller: controller.patientNameController,
+                child: Obx(() => TextFormField(
+                  controller: controller.patientNameController,
                   decoration: InputDecoration(
-                    hintText: 'Select patient',
+                    hintText: controller.selectedPatientName.value.isEmpty
+                        ? 'Select patient'
+                        : controller.selectedPatientName.value,
                     border: OutlineInputBorder(),
                     suffixIcon: Icon(Icons.arrow_drop_down),
                   ),
-                ),
+                )),
               ),
             ),
 
+            SizedBox(height: 20),
 
             Text('Doctor Name:'),
             SizedBox(height: 8),
-            TextFormField(
-              controller: controller.doctorNameController,
-              decoration: InputDecoration(
-                hintText: 'Enter doctor name',
-                border: OutlineInputBorder(),
+            InkWell(
+              onTap: () async {
+                // Navigate to doctor list and wait for result
+                final result = await Get.to(() => NewDoctorFragments());
+                if (result != null && result is String) {
+                  controller.selectDoctor(result);
+                }
+              },
+              child: IgnorePointer(
+                child: Obx(() => TextFormField(
+                  controller: controller.doctorNameController,
+                  decoration: InputDecoration(
+                    hintText: controller.selectedDoctorName.value.isEmpty
+                        ? 'Select doctor'
+                        : controller.selectedDoctorName.value,
+                    border: OutlineInputBorder(),
+                    suffixIcon: Icon(Icons.arrow_drop_down),
+                  ),
+                )),
               ),
             ),
 

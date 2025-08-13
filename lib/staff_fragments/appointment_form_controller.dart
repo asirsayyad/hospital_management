@@ -10,6 +10,8 @@ class AppointmentFormController extends GetxController {
   var selectedVisitType = ''.obs;
   var selectedDate = DateTime.now().obs;
   var selectedTimeSlot = ''.obs;
+  var selectedPatientName = ''.obs;
+  var selectedDoctorName = ''.obs; // Add this for selected doctor
 
   Database db = Get.find();
 
@@ -27,6 +29,18 @@ class AppointmentFormController extends GetxController {
     super.onInit();
     patientNameController = TextEditingController();
     doctorNameController = TextEditingController();
+  }
+
+  // Method to select patient from list
+  void selectPatient(String patientName) {
+    selectedPatientName.value = patientName;
+    patientNameController.text = patientName;
+  }
+
+  // Method to select doctor from list
+  void selectDoctor(String doctorName) {
+    selectedDoctorName.value = doctorName;
+    doctorNameController.text = doctorName;
   }
 
   void selectVisitType(String visitType) {
@@ -85,8 +99,8 @@ class AppointmentFormController extends GetxController {
   }
 
   void scheduleAppointment() {
-    if (doctorNameController.text.trim().isEmpty ||
-        patientNameController.text.trim().isEmpty ||
+    if (selectedDoctorName.value.isEmpty ||
+        selectedPatientName.value.isEmpty ||
         selectedVisitType.value.isEmpty ||
         selectedTimeSlot.value.isEmpty) {
       Get.snackbar(

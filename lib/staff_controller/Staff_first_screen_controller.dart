@@ -10,7 +10,11 @@ class StaffFirstScreenController extends GetxController {
   var patientList = <Map<String, dynamic>>[].obs;
   Database db = Get.find();
 
-
+  @override
+  void onInit() {
+    super.onInit();
+    fetchPatientNames(); // Initialize data when controller is created
+  }
 
   Future<void> fetchPatientNames() async {
     try {
@@ -24,9 +28,6 @@ class StaffFirstScreenController extends GetxController {
       debugPrint("DB Error: $e");
     }
   }
-
-
-
 
   // todo: pagination
   Future<void> updateSearch(String query) async {
@@ -47,7 +48,6 @@ class StaffFirstScreenController extends GetxController {
     } else {
       fetchPatientNames();
     }
-
   }
 
   Future<void> selectMenuItem(int index) async {

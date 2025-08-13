@@ -276,7 +276,7 @@ class LoginScreen extends StatelessWidget {
                                     Text("Don't have an account? "),
                                     OutlinedButton(
                                       onPressed: () {},
-                                      child: Text('Sign Ups'),
+                                      child: Text('Sign Up'),
                                     ),
                                   ],
                                 ),
