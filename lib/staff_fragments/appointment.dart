@@ -8,125 +8,157 @@ class Appointment extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    AppointmentListController controller = Get.put(AppointmentListController());
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Appointments'),
       ),
-      body: GetBuilder<AppointmentListController>(
-        init: AppointmentListController(), // Controller in onInit
-        builder: (controller) {
-          return Column(
-            children: [
-              // Search bar
-              Padding(
-                padding: const EdgeInsets.all(16),
-                child: TextField(
-                  onChanged: controller.updateSearch,
-                  decoration: const InputDecoration(
-                    hintText: 'Search appointments...',
-                    border: OutlineInputBorder(),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Expanded(
+                  flex: 2,
+                  child: TextField(
+                    onChanged: controller.updateSearch,
+                    decoration: const InputDecoration(
+                      hintText: 'Search appointments...',
+                      border: OutlineInputBorder(),
+                    ),
                   ),
                 ),
-              ),
+                SizedBox(width: 16),
+                Expanded(
+                  flex: 1,
+                  child: Obx(() => InkWell(
+                    onTap: () async {
+                      DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime.now().subtract(Duration(days: 365)),
+                        lastDate: DateTime.now().add(Duration(days: 365)),
+                      );
+                      if (pickedDate != null) {
+                        controller.filterBySelectedDate(pickedDate);
+                      }
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.grey),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: Text(
+                        controller.selectedDateText.value.isEmpty
+                            ? 'Select Date'
+                            : controller.selectedDateText.value,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  )),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Obx(() {
+              final list = controller.filteredAppointmentList;
+              if (list.isEmpty) {
+                return Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text('No appointments found.'),
+                      if (controller.selectedDateText.value.isNotEmpty)
+                        Text(
+                          'for ${controller.selectedDateText.value}',
+                          style: TextStyle(color: Colors.grey),
+                        ),
+                    ],
+                  ),
+                );
+              }
+              return ListView.builder(
+                itemCount: list.length,
+                itemBuilder: (context, index) {
+                  final appointment = list[index];
+                  final id = appointment['id'] is int
+                      ? appointment['id'] as int
+                      : int.tryParse('${appointment['id']}') ?? 0;
+                  final status = appointment['status']?.toString() ?? 'Unknown';
 
-              // Appointments list
-              Expanded(
-                child: Obx(() {
-                  final list = controller.filteredAppointmentList;
-                  if (list.isEmpty) {
-                    return const Center(child: Text('No appointments found.'));
-                  }
-
-                  return ListView.builder(
-                    itemCount: list.length,
-                    itemBuilder: (context, index) {
-                      final appointment = list[index];
-                      final id = appointment['id'] is int
-                          ? appointment['id'] as int
-                          : int.tryParse('${appointment['id']}') ?? 0;
-
-                      final status = appointment['status']?.toString() ?? 'Unknown';
-
-                      return Card(
-                        margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-                        child: ListTile(
-                          onTap: () {
-                            // Handle appointment tap
-                          },
-                          title: Text(
-                            '${appointment['doctor_name'] ?? 'Unknown Doctor'}',
-                            style: TextStyle(fontWeight: FontWeight.bold),
+                  return Card(
+                    margin: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                    child: ListTile(
+                      title: Text(
+                        '${appointment['doctor_name'] ?? 'Unknown Doctor'}',
+                        style: TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      subtitle: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Visit Type: ${appointment['visit_type'] ?? 'N/A'}'),
+                          Text('Date: ${appointment['appointment_date'] ?? 'N/A'}'),
+                          Text('Time: ${appointment['appointment_time'] ?? 'N/A'}'),
+                        ],
+                      ),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            decoration: BoxDecoration(
+                              color: controller.getStatusColor(status),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              status,
+                              style: TextStyle(color: Colors.white, fontSize: 12),
+                            ),
                           ),
-                          subtitle: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('Visit Type: ${appointment['visit_type'] ?? 'N/A'}'),
-                              Text('Date: ${appointment['appointment_date'] ?? 'N/A'}'),
-                              Text('Time: ${appointment['appointment_time'] ?? 'N/A'}'),
-                            ],
-                          ),
-                          trailing: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Container(
-                                padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: controller.getStatusColor(status),
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Text(
-                                  status,
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ),
-                              TextButton(
-                                onPressed: () {
-                                  // Add delete confirmation dialog
-                                  showDialog(
-                                    context: context,
-                                    builder: (BuildContext context) {
-                                      return AlertDialog(
-                                        title: Text('Delete Appointment'),
-                                        content: Text('Are you sure you want to delete this appointment?'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () => Navigator.pop(context),
-                                            child: Text('Cancel'),
-                                          ),
-                                          TextButton(
-                                            onPressed: () {
-                                              controller.deleteAppointment(id);
-                                              Navigator.pop(context);
-                                            },
-                                            child: Text('Delete', style: TextStyle(color: Colors.red)),
-                                          ),
-                                        ],
-                                      );
-                                    },
+                          TextButton(
+                            onPressed: () {
+                              showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Delete Appointment'),
+                                    content: Text('Are you sure you want to delete this appointment?'),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () => Navigator.pop(context),
+                                        child: Text('Cancel'),
+                                      ),
+                                      TextButton(
+                                        onPressed: () {
+                                          controller.deleteAppointment(id);
+                                          Navigator.pop(context);
+                                        },
+                                        child: Text('Delete', style: TextStyle(color: Colors.red)),
+                                      ),
+                                    ],
                                   );
                                 },
-                                child: Text('Delete', style: TextStyle(color: Colors.red)),
-                              ),
-                            ],
+                              );
+                            },
+                            child: Text('Delete', style: TextStyle(color: Colors.red)),
                           ),
-                        ),
-                      );
-                    },
+                        ],
+                      ),
+                    ),
                   );
-                }),
-              ),
-            ],
-          );
-        },
+                },
+              );
+            }),
+          ),
+        ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Get.to(() => AppointmentForm())?.then((_) {
-            // Refresh the list when returning from appointment form
-            final controller = Get.find<AppointmentListController>();
             controller.fetchAppointments();
           });
         },

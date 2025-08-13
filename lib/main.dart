@@ -7,7 +7,7 @@ import 'package:hospital_management/loading_screen.dart';
 import 'package:hospital_management/login_screen.dart';
 import 'package:hospital_management/service/service_db.dart';
 import 'package:hospital_management/staff_screen/staff_first_screen.dart';
-import 'package:sqflite/sqflite.dart';
+// import 'package:sqflite/sqflite.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 // import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
