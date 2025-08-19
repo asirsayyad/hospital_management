@@ -67,6 +67,35 @@ class AppointmentListController extends GetxController {
       filteredAppointmentList.value = results;
     }
   }
+  Future<void> fetchAllAppointments() async {
+    try {
+      // Clear filters
+      selectedDateText.value = "";
+      searchText.value = "";
+
+      // Fetch all data from DB
+      final data = await db.rawQuery(
+          "SELECT id, doctor_name, visit_type, appointment_date, appointment_time, status "
+              "FROM appointments "
+              "ORDER BY appointment_date DESC, appointment_time ASC"
+      );
+
+      // Assign to both lists so UI updates instantly
+      appointmentList.value = data;
+      filteredAppointmentList.value = List.from(data);
+
+      debugPrint("Fetched ${data.length} appointments");
+    } catch (e) {
+      debugPrint("Error fetching all appointments: $e");
+      Get.snackbar(
+        "Error",
+        "Failed to fetch appointments",
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
 
   Future<void> deleteAppointment(int appointmentId) async {
     try {

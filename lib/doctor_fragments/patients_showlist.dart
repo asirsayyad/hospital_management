@@ -13,7 +13,7 @@ class Patients extends StatelessWidget {
   Widget build(BuildContext context) {
     // use Get.find() to get the same controller instance created in the parent
     patient_list_controller controller = Get.put(patient_list_controller());
-    Database db = Get.find();
+    // Database db = Get.find();
 
     return Obx(() {
       final list = controller.filteredPatientList;

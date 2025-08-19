@@ -30,7 +30,7 @@ class Appointment extends StatelessWidget {
                     ),
                   ),
                 ),
-                SizedBox(width: 16),
+                SizedBox(width: 8),
                 Expanded(
                   flex: 1,
                   child: Obx(() => InkWell(
@@ -60,8 +60,21 @@ class Appointment extends StatelessWidget {
                     ),
                   )),
                 ),
+                SizedBox(width: 8),
+                ElevatedButton(
+                  onPressed: () {
+                    controller.fetchAllAppointments();
+                  },
+                  child: Text("All"),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                    foregroundColor: Colors.white,
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                  ),
+                )
               ],
             ),
+
           ),
           Expanded(
             child: Obx(() {
@@ -105,49 +118,50 @@ class Appointment extends StatelessWidget {
                           Text('Time: ${appointment['appointment_time'] ?? 'N/A'}'),
                         ],
                       ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: controller.getStatusColor(status),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Status text only
+                            Text(
                               status,
-                              style: TextStyle(color: Colors.white, fontSize: 12),
+                              style: TextStyle(
+                                color: controller.getStatusColor(status),
+                                // fontWeight: FontWeight.bold,
+                              ),
                             ),
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              showDialog(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title: Text('Delete Appointment'),
-                                    content: Text('Are you sure you want to delete this appointment?'),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () => Navigator.pop(context),
-                                        child: Text('Cancel'),
-                                      ),
-                                      TextButton(
-                                        onPressed: () {
-                                          controller.deleteAppointment(id);
-                                          Navigator.pop(context);
-                                        },
-                                        child: Text('Delete', style: TextStyle(color: Colors.red)),
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
-                            child: Text('Delete', style: TextStyle(color: Colors.red)),
-                          ),
-                        ],
-                      ),
+                            const SizedBox(width: 8),
+
+                            // Delete Icon
+                            IconButton(
+                              icon: const Icon(Icons.delete, color: Colors.red),
+                              onPressed: () {
+                                showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) {
+                                    return AlertDialog(
+                                      title: const Text('Delete Appointment'),
+                                      content: const Text('Are you sure you want to delete this appointment?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          child: const Text('Cancel'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () {
+                                            controller.deleteAppointment(id);
+                                            Navigator.pop(context);
+                                          },
+                                          child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                                        ),
+                                      ],
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
+                        )
+
                     ),
                   );
                 },
@@ -163,7 +177,7 @@ class Appointment extends StatelessWidget {
           });
         },
         backgroundColor: Colors.blue,
-        child: Text('+'),
+        child: Text('Add'),
       ),
     );
   }

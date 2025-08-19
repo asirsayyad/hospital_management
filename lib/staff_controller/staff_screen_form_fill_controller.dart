@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:hospital_management/staff_controller/staff_first_screen_controller.dart';
 import 'package:intl/intl.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -74,7 +75,19 @@ class StaffPatientFormController extends GetxController {
       );
     ''';
 
-        await db.rawInsert(query);
+        var id = await db.rawInsert(query); // return inserted primary key
+        // logic for patient id
+        var strHospitalName = "Care Clinic";
+        var patientId = "";
+        var arrHospitalWords = strHospitalName.split(" "); // ["Care", "Clinic"]
+        for(int index = 0; index < arrHospitalWords.length; index++) {
+          String strHospitalWord = arrHospitalWords[index]; // Care
+          patientId = patientId + strHospitalWord[0].toUpperCase(); // C
+        }
+        //patientId = "CC"
+        patientId = "$patientId-$id"; //CC-1
+        await db.rawQuery("UPDATE patient SET patient_id = '$patientId' WHERE id = '$id'");
+        Get.back();
         debugPrint("Patient inserted successfully.");
       } catch (e) {
         debugPrint("Error inserting patient: $e");
@@ -159,7 +172,21 @@ class StaffPatientFormController extends GetxController {
     }
 
     // This block will ONLY execute if ALL validations pass
+    // await insertPatient(db: db);
+    // ScaffoldMessenger.of(Get.context!).showSnackBar(
+    //   SnackBar(
+    //     content: Text('Patient form saved successfully!'),
+    //     backgroundColor: Colors.green,
+    //   ),
+    // );
+    // This block will ONLY execute if ALL validations pass
     await insertPatient(db: db);
+
+// ✅ Refresh patient list immediately
+    if (Get.isRegistered<StaffFirstScreenController>()) {
+      Get.find<StaffFirstScreenController>().fetchPatientNames();
+    }
+
     ScaffoldMessenger.of(Get.context!).showSnackBar(
       SnackBar(
         content: Text('Patient form saved successfully!'),
@@ -167,6 +194,9 @@ class StaffPatientFormController extends GetxController {
       ),
     );
 
+    Get.back();
+
+// refresh();
     Get.back();
   }
 }

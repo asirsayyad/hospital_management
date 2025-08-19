@@ -9,7 +9,7 @@ import 'package:path/path.dart';
 class ServiceDb {
   Future<Database> createDbInstance() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'hospital.db'); //
+    String path = join(databasesPath, 'hospital1.db'); //
     debugPrint(path);
 
     Database db = await databaseFactory.openDatabase(
@@ -20,6 +20,8 @@ class ServiceDb {
           await db.execute('''
            CREATE TABLE patient (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
+  hospital_id INTEGER,
+  patient_id TEXT,
   name TEXT NOT NULL,
   last_name TEXT NOT NULL,
   mobile_number TEXT,

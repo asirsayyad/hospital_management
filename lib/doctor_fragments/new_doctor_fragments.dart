@@ -10,7 +10,7 @@ class NewDoctorFragments extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Select Doctor"),
+        title: const Text("Select Doctor"),
       ),
       body: GetBuilder<DoctorListController>(
         init: DoctorListController(),
@@ -29,7 +29,8 @@ class NewDoctorFragments extends StatelessWidget {
                     itemBuilder: (context, index) {
                       final doctor = doctorList[index];
                       final isActive = doctor['is_active'] == 1;
-                      final doctorName = 'Dr. ${doctor['first_name'] ?? ''} ${doctor['last_name'] ?? ''}';
+                      final doctorName =
+                          'Dr. ${doctor['first_name'] ?? ''} ${doctor['last_name'] ?? ''}';
 
                       return ListTile(
                         onTap: () {
@@ -38,35 +39,24 @@ class NewDoctorFragments extends StatelessWidget {
                         },
                         title: Text(
                           doctorName,
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text('Degree: ${doctor['degree'] ?? 'N/A'}'),
-                            Text('Time: ${doctor['start_time'] ?? ''} - ${doctor['end_time'] ?? ''}'),
+                            Text(
+                              'Time: ${doctor['start_time'] ?? ''} - ${doctor['end_time'] ?? ''}',
+                            ),
                           ],
                         ),
-                        leading: Icon(Icons.person),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Container(
-                              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: isActive ? Colors.green : Colors.red,
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                isActive ? 'Active' : 'Inactive',
-                                style: TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 12,
-                                ),
-                              ),
-                            ),
-                            Icon(Icons.arrow_forward_ios, size: 16),
-                          ],
+                        leading: const Icon(Icons.person),
+                        trailing: Text(
+                          isActive ? 'Active' : 'Inactive',
+                          style: TextStyle(
+                            color: isActive ? Colors.green : Colors.red,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       );
                     },
@@ -79,7 +69,7 @@ class NewDoctorFragments extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Get.to(() => DoctorForm())?.then((_) {
+          Get.to(() => const DoctorForm())?.then((_) {
             final controller = Get.find<DoctorListController>();
             controller.fetchDoctorNames();
           });

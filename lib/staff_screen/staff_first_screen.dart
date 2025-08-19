@@ -68,7 +68,7 @@ class StaffFirstScreen extends StatelessWidget {
               children: [
                 // Search bar (only show for patient and appointment lists)
                 Obx(() {
-                  if (controller.selectedIndex.value == 0 || controller.selectedIndex.value == 1) {
+                  if (controller.selectedIndex.value == 0 ) {
                     return Padding(
                       padding: const EdgeInsets.all(16),
                       child: TextField(
